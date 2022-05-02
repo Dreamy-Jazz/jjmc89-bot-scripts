@@ -260,7 +260,7 @@ def validate_config(
         for key, value in page_config.items():
             if key in required_keys:
                 has_keys.append(key)
-            if key in ("add", "enabled", "remove", "required"):
+            if key in ("add", "enabled", "required"):
                 if not isinstance(value, bool):
                     return False
             elif key == "group":
@@ -271,6 +271,17 @@ def validate_config(
             elif key == "page":
                 if value.content_model != "MassMessageListContent":
                     return False
+            elif key == "remove":
+                for remove_key, remove_value in value.items():
+                    if remove_key in ("indef", "group"):
+                        if not isinstance(remove_value, bool):
+                            return False
+                    elif remove_key in ("edits", "logs"):
+                        if not isinstance(remove_value, str):
+                            return False
+                    elif remove_key in ("skip_if_in_group"):
+                        if not isinstance(remove_value, bool):
+                            return False
             else:
                 return False
         if sorted(has_keys) != sorted(required_keys):
